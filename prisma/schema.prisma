@@ -1,0 +1,51 @@
+// Prisma schema for the Data Agent backend.
+//
+// Supabase-compatible split-URL setup:
+//   - `url`       -> pooled connection (port 6543, ?pgbouncer=true) for runtime queries
+//   - `directUrl` -> direct connection (port 5432) for migrations & introspection
+//
+// See .env.example for the exact connection-string formats.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// Metadata for every downloadable artifact produced by the agent
+/// (plots, Excel/Word/CSV exports, etc.). The binary file itself lives on
+/// local disk at `localPath`; this row is what the download route resolves.
+model DataAgentArtifact {
+  id          String   @id @default(cuid())
+  threadId    String
+  userId      String
+  filename    String
+  kind        String
+  label       String
+  localPath   String
+  sandboxPath String?
+  sizeBytes   Int
+  createdAt   DateTime @default(now())
+
+  @@index([threadId])
+  @@index([userId])
+  @@map("data_agent_artifact")
+}
+
+/// Lightweight metadata for each conversation so the UI can show a persistent
+/// sidebar list and reload past chats. The message history itself lives in the
+/// LangGraph checkpointer (keyed by thread_id); `id` here == that thread_id.
+model DataAgentConversation {
+  id        String   @id
+  userId    String
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("data_agent_conversation")
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Agent</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦁</text></svg>"
+    />
+    <script>
+      // Apply saved theme + sidebar state before paint to avoid a flash.
+      try {
+        if (localStorage.getItem('da.theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        if (localStorage.getItem('da.sidebar') === 'collapsed') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div class="app">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">🦁</span>
+          <span class="brand-name">Data Agent</span>
+        </div>
+
+        <button id="newChatBtn" class="btn btn-ghost full">+ New conversation</button>
+
+        <div class="sidebar-section convo-section">
+          <div class="sidebar-label">Conversations</div>
+          <div id="convoList" class="convo-list"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Model</div>
+          <select id="modelSelect" class="input">
+            <option value="deepseek/deepseek-v3.2">DeepSeek V3.2 (default)</option>
+            <option value="deepseek/deepseek-v4-pro">DeepSeek V4 Pro</option>
+            <option value="openai/gpt-4o-mini">GPT-4o mini</option>
+            <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+          </select>
+        </div>
+
+        <div class="sidebar-spacer"></div>
+
+        <div id="keyStatus" class="key-status">
+          <span class="dot" id="orDot"></span> OpenRouter
+          <span class="dot" id="e2bDot"></span> E2B
+        </div>
+        <button id="themeToggle" class="btn btn-ghost full" type="button">🌙 Dark mode</button>
+        <button id="settingsBtn" class="btn btn-ghost full">⚙ Settings</button>
+      </aside>
+
+      <!-- Main -->
+      <main class="main">
+        <div class="topbar">
+          <button id="sidebarToggle" class="sidebar-toggle" type="button" title="Toggle sidebar">☰</button>
+        </div>
+        <div id="messages" class="messages">
+          <div class="empty-state">
+            <div class="empty-emoji">📊</div>
+            <h1>What can I analyze for you?</h1>
+            <p>
+              Upload a dataset and ask a question. I run Python in a sandbox,
+              build charts, and export results — all live.
+            </p>
+          </div>
+        </div>
+
+        <div class="composer">
+          <div id="uploadChips" class="upload-chips"></div>
+          <div class="composer-row">
+            <button id="attachBtn" class="btn btn-icon" title="Upload a file">📎</button>
+            <input id="fileInput" type="file" hidden />
+            <textarea
+              id="prompt"
+              class="prompt"
+              rows="1"
+              placeholder="Ask about your data…"
+            ></textarea>
+            <button id="sendBtn" class="btn btn-primary">Send</button>
+          </div>
+          <div class="composer-hint">
+            Keys are stored in your browser and sent per request. Supabase stays server-side.
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Settings modal -->
+    <div id="settingsModal" class="modal hidden">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h2>Settings</h2>
+          <button id="closeSettings" class="btn btn-icon">✕</button>
+        </div>
+        <div class="modal-body">
+          <label class="field">
+            <span>OpenRouter API key</span>
+            <input id="openrouterKey" class="input" type="password" placeholder="sk-or-v1-…" />
+          </label>
+          <label class="field">
+            <span>E2B API key</span>
+            <input id="e2bKey" class="input" type="password" placeholder="e2b_…" />
+          </label>
+          <p class="field-note">
+            Stored in <code>localStorage</code> on this device and attached as
+            <code>x-openrouter-key</code> / <code>x-e2b-key</code> headers on every
+            request. Supabase credentials live only in the server's <code>.env</code>.
+          </p>
+        </div>
+        <div class="modal-foot">
+          <button id="clearKeys" class="btn btn-ghost">Clear</button>
+          <button id="saveKeys" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

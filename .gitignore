@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Prisma
+prisma/migrations/dev.db*
+
+# Local SQLite (no-DB / no-Supabase mode)
+data-agent.sqlite
+data-agent.sqlite-shm
+data-agent.sqlite-wal
+
+# Runtime artifacts (local disk storage)
+uploads/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Temp zip inspection
+_zip_inspect/
+data-agent-backend.zip
